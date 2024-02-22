@@ -257,14 +257,7 @@ namespace ThePornDB.Providers
 
             sceneData = (JObject)sceneData["data"];
 
-            //var images = new List<(ImageType Type, string Url)>
-            //{
-                //(ImageType.Primary, (string)sceneData["posters"]["large"]),
-                //(ImageType.Primary, (string)sceneData["background"]["large"]),
-                //(ImageType.Backdrop, (string)sceneData["background"]["large"]),
-            //};
-            
-            var images = images_static.Concat(ImageList.GetImageList(sceneData).ToList());
+            var images = ImageList.GetImageList(sceneData).ToList();
             
             foreach (var image in images)
             {
