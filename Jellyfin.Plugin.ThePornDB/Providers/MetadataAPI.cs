@@ -10,6 +10,7 @@ using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 using ThePornDB.Configuration;
 using ThePornDB.Helpers;
@@ -104,6 +105,7 @@ namespace ThePornDB.Providers
 
             result.Item.Name = (string)sceneData["title"];
             result.Item.Overview = (string)sceneData["description"];
+            result.Item.OriginalTitle = OriginalTitle.FromCSV(sceneData);
 
             if (sceneData.ContainsKey("site") && sceneData["site"].Type == JTokenType.Object)
             {
@@ -208,6 +210,16 @@ namespace ThePornDB.Providers
                         case ActorsRoleStyle.NameByScene:
                             role = (string)actorLink["name"];
                             break;
+                        case ActorsRoleStyle.NamesDifferent:
+                            if ((string)actorLink["name"] == name == false)
+                            {
+                                role = (string)actorLink["name"];
+                            }
+                            else
+                            {
+                                role = string.Empty;
+                            }
+                            break;
                         case ActorsRoleStyle.None:
                             role = string.Empty;
                             break;
@@ -245,13 +257,15 @@ namespace ThePornDB.Providers
 
             sceneData = (JObject)sceneData["data"];
 
-            var images = new List<(ImageType Type, string Url)>
-            {
-                (ImageType.Primary, (string)sceneData["posters"]["large"]),
-                (ImageType.Primary, (string)sceneData["background"]["large"]),
-                (ImageType.Backdrop, (string)sceneData["background"]["large"]),
-            };
-
+            //var images = new List<(ImageType Type, string Url)>
+            //{
+                //(ImageType.Primary, (string)sceneData["posters"]["large"]),
+                //(ImageType.Primary, (string)sceneData["background"]["large"]),
+                //(ImageType.Backdrop, (string)sceneData["background"]["large"]),
+            //};
+            
+            var images = images_static.Concat(ImageList.GetImageList(sceneData).ToList());
+            
             foreach (var image in images)
             {
                 if (string.IsNullOrEmpty(image.Url))
@@ -331,7 +345,36 @@ namespace ThePornDB.Providers
             // result.Item.Name = (string)sceneData["name"];
             result.Item.ExternalId = (string)sceneData["name"];
             result.Item.OriginalTitle = string.Join(", ", sceneData["aliases"].Select(o => o.ToString().Trim()));
-            result.Item.Overview = ActorsOverview.CustomFormat(sceneData);
+            
+            string overview = string.Empty;           
+            switch (Plugin.Instance.Configuration.ActorsOverview)
+            {
+                case ActorsOverviewStyle.Custom:
+                    overview = ActorStyle.GetFormat(sceneData).Overview;
+                    break;              
+                case ActorsOverviewStyle.None:
+                    overview = " ";
+                    break;
+            }
+             if (!string.IsNullOrEmpty(overview))
+            {
+                result.Item.Overview = overview;
+            }
+             var tags = Array.Empty<string>();
+
+            switch (Plugin.Instance.Configuration.ActorsTags)
+            {
+                case ActorsTagStyle.Custom:
+                    tags = ActorStyle.GetFormat(sceneData).Tags;
+                    break;
+                case ActorsTagStyle.None:
+                    tags = Array.Empty<string>();
+                    break;
+            }
+            if (tags == null || tags.Length == 0 == false)
+            {
+                result.Item.Tags = tags;
+            }
 
             var actorBornDate = (string)sceneData["extras"]["birthday"];
             if (DateTime.TryParseExact(actorBornDate, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var sceneDateObj))
