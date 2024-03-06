@@ -17,11 +17,10 @@ namespace ThePornDB.Helpers
             if (!string.IsNullOrEmpty(cup))
             {
                 cup = Regex.Replace(cup, "[0-9]", string.Empty);
-            }    
-         
+            }
             var placeholders = new Dictionary<string, string>()
             {
-                { "{cup}", cup },
+                { "{cup}", cup.ToUpper()},
                 { "{po*}", "Pornstars" },
                 { "{bio}", (string)actorData["bio"] },
                 { "{hips}", (string)actorData["extras"]["hips"] },
@@ -76,23 +75,24 @@ namespace ThePornDB.Helpers
         }
 
     }
-        public class OriginalTitle
+    public class OriginalTitle
+    {
+    
+      private static readonly string path_list = Path.Combine(Plugin.Instance.DataFolderPath, "data");
+
+        public static string FromCSV(JObject data)
         {
-            private static readonly string path_list = Path.Combine(Plugin.Instance.DataFolderPath, "data");
 
-            public static string FromCSV(JObject data)
+            var format = string.Empty;
+            var original_title = string.Empty;
+            var actors = new JArray { };
+            var no_male = new JArray { };
+
+            foreach (var actor in data["performers"])
             {
+                string gender = string.Empty;
 
-                var format = string.Empty;
-                var original_title = string.Empty;
-                var actors = new JArray { };
-                var no_male = new JArray { };
-
-                foreach (var actor in data["performers"])
-                {
-                    string gender = string.Empty;
-
-                    actors.Add((string)actor["name"]);
+                actors.Add((string)actor["name"]);
 
                     if (actor["parent"] != null && actor["parent"].Type == JTokenType.Object)
                     {
@@ -112,7 +112,7 @@ namespace ThePornDB.Helpers
 
                         }
                     }
-                }
+            }
 
                 string title = (string)data["title"],
                     studio = (string)data["site"]["name"],
@@ -142,9 +142,78 @@ namespace ThePornDB.Helpers
 
 
                 }
-                return original_title;
-            }
+            return original_title;
+           
         }
+    }
+    public class Tagline
+    {
+        private static readonly string path_list = Path.Combine(Plugin.Instance.DataFolderPath, "data");
+
+        public static string GetTagline(JObject data)
+        {
+            var format = string.Empty;
+            var tagline = string.Empty;
+            var actors = new JArray { };
+            var no_male = new JArray { };
+
+            foreach (var actor in data["performers"])
+            {
+                string gender = string.Empty;
+
+                actors.Add((string)actor["name"]);
+
+                if (actor["parent"] != null && actor["parent"].Type == JTokenType.Object)
+                {
+                    if (actor["parent"]["extras"]["gender"] != null)
+                    {
+                        gender = (string)actor["parent"]["extras"]["gender"];
+
+                        if (gender == "Male" == false)
+                        {
+                            var dict_males = File.ReadLines(Path.Combine(path_list, "males.csv")).Select(line => line.Split(';')).ToDictionary(key => key[0], val => val[1]);
+                            if (!dict_males.ContainsKey((string)actor["name"]))
+                            {
+                                no_male.Add((string)actor["name"]);
+                            }
+
+                        }
+
+                    }
+                }
+            }
+
+
+            string title = (string)data["title"],
+                   studio = (string)data["site"]["name"],
+                   id = (string)data["external_id"];
+
+            if (Plugin.Instance.Configuration.UseCustomTagline)
+                
+            {
+                var dictionary = File.ReadLines(Path.Combine(path_list, "taglines.csv")).Select(line => line.Split(';')).ToDictionary(key => key[0], val => val[1]);
+
+                if (dictionary.ContainsKey(studio))
+
+                {
+                    format = dictionary.FirstOrDefault(x => x.Key == studio).Value;
+                }
+                else
+                { format = Plugin.Instance.Configuration.CustomTagline; }
+                DateTime date = (DateTime)data["date"];
+
+                var parameters = new Dictionary<string, object>()
+              
+
+                { { "{id}", id }, { "{title}", title }, { "{studio}", studio }, { "{release_date}", date.ToString("yyyy-MM-dd") },{"{actors}", string.Join (", ", actors) }, { "{no_male}",string.Join (", ", no_male)  } };
+                tagline = parameters.Aggregate(format, (current, parameter) => current.Replace(parameter.Key, parameter.Value.ToString()));
+                tagline = string.Join(" ", tagline.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+                
+            }
+            return tagline;
+        }
+    }
+
        
 }
 
