@@ -98,6 +98,9 @@ namespace ThePornDB.Configuration
             this.UseOriginalTitle = false;
             this.OriginalTitle = "{studio}: {title} ({no_male})";
 
+            this.UseCustomTagline = false;
+            this.CustomTagline = "{studio} - {id}";
+
             this.ThumbImage = ThumbImageStyle.None;
             this.PosterImage = PosterImageStyle.Full;
             this.BackdropImage = BackdropImageStyle.Full;
@@ -143,6 +146,10 @@ namespace ThePornDB.Configuration
         public bool UseOriginalTitle { get; set; }
 
         public string OriginalTitle { get; set; }
+
+        public bool UseCustomTagline { get; set; }
+
+        public string CustomTagline { get; set; }
 
         public bool UseUnmatchedTag { get; set; }
 
