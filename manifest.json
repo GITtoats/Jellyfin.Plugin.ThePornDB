@@ -3,12 +3,19 @@
         "category": "Metadata",
         "guid": "b88714eb-55e9-402f-ba72-4dfaa4b1401f",
         "name": "ThePornDB",
-        "description": "This metadata provider helps fill Jellyfin/Emby with information for your adult videos by pulling from the MetadataAPI.",
+        "description": "This metadata provider helps fill Jellyfin/Emby with information for your adult videos by pulling from the ThePornDB.",
         "owner": "DirtyRacer",
         "overview": "Manage Your Adult Videos in Jellyfin/Emby",
-        "imageUrl": "https://metadataapi.net/images/logo.png",
+        "imageUrl": "https://theporndb.net/images/logo.png",
         "versions": [
             {
+                "checksum": "c343beb2745ad8dc8179d9e009353cc3",
+                "changelog": "Changed Endpoint; Added Movies, JAV Support; Few New Setting; Changed ID format (There is a task for migration, for old users); Minor Changes",
+                "targetAbi": "10.8.0.0",
+                "sourceUrl": "https://github.com/ThePornDatabase/Jellyfin.Plugin.ThePornDB/releases/download/1.2.0.7/Jellyfin.Plugin.ThePornDB.zip",
+                "timestamp": "2024-03-05 13:20:31",
+                "version": "1.2.0.7"
+            },            {
                 "checksum": "fd496a5496cb05d30475f747e2dd5766",
                 "changelog": "Added Latest Jellyfin Support (10.8.0); Added Latest Emby Support (4.7); Minor Changes",
                 "targetAbi": "10.8.0.0",
