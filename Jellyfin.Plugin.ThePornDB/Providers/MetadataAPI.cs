@@ -10,7 +10,6 @@ using MediaBrowser.Controller.Entities.Movies;
 using MediaBrowser.Controller.Providers;
 using MediaBrowser.Model.Entities;
 using MediaBrowser.Model.Providers;
-using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 using ThePornDB.Configuration;
 using ThePornDB.Helpers;
@@ -106,6 +105,7 @@ namespace ThePornDB.Providers
             result.Item.Name = (string)sceneData["title"];
             result.Item.Overview = (string)sceneData["description"];
             result.Item.OriginalTitle = OriginalTitle.FromCSV(sceneData);
+            result.Item.Tagline = Tagline.GetTagline(sceneData);
 
             if (sceneData.ContainsKey("site") && sceneData["site"].Type == JTokenType.Object)
             {
