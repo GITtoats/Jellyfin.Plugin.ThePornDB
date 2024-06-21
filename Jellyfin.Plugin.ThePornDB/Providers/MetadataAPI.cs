@@ -110,29 +110,51 @@ namespace ThePornDB.Providers
 
             if (sceneData.ContainsKey("site") && sceneData["site"].Type == JTokenType.Object)
             {
-                if (Plugin.Instance.Configuration.StudioStyle == StudioStyle.Both || Plugin.Instance.Configuration.StudioStyle == StudioStyle.Site)
+                if (Plugin.Instance.Configuration.StudioStyle == StudioStyle.All || Plugin.Instance.Configuration.StudioStyle == StudioStyle.Site)
                 {
                     result.Item.AddStudio((string)sceneData["site"]["name"]);
                 }
 
-                if (Plugin.Instance.Configuration.StudioStyle == StudioStyle.Both || Plugin.Instance.Configuration.StudioStyle == StudioStyle.Network)
+                if (Plugin.Instance.Configuration.StudioStyle == StudioStyle.All || Plugin.Instance.Configuration.StudioStyle == StudioStyle.Parent)
+                {
+                    int? site_id = (int)sceneData["site"]["id"],
+                        parent_id = (int?)sceneData["site"]["parent_id"];
+
+                    if (parent_id.HasValue && !site_id.Equals(parent_id))
+                    {
+                        if (sceneData["site"]["parent"]?.Type == JTokenType.Object)
+                        {
+                            result.Item.AddStudio((string)sceneData["site"]["parent"]["name"]);
+                        }
+                        else
+                        {
+                            var siteData = await SiteUpdate(parent_id.Value.ToString(), cancellationToken).ConfigureAwait(false);
+                            if (siteData != null)
+                            {
+                                result.Item.AddStudio((string)siteData["name"]);
+                            }
+                        }
+                    }
+                }
+
+                if (Plugin.Instance.Configuration.StudioStyle == StudioStyle.All || Plugin.Instance.Configuration.StudioStyle == StudioStyle.Network)
                 {
                     int? site_id = (int)sceneData["site"]["id"],
                         network_id = (int?)sceneData["site"]["network_id"];
 
                     if (network_id.HasValue && !site_id.Equals(network_id))
                     {
-                        var siteData = await SiteUpdate(network_id.Value.ToString(), cancellationToken).ConfigureAwait(false);
-                        if (siteData != null)
+                        if (sceneData["site"]["network"]?.Type == JTokenType.Object)
                         {
-                            result.Item.AddStudio((string)siteData["name"]);
+                            result.Item.AddStudio((string)sceneData["site"]["network"]["name"]);
                         }
-                    }
-                    else
-                    {
-                        if (!result.Item.Studios.Any())
+                        else
                         {
-                            result.Item.AddStudio((string)sceneData["site"]["name"]);
+                            var siteData = await SiteUpdate(network_id.Value.ToString(), cancellationToken).ConfigureAwait(false);
+                            if (siteData != null)
+                            {
+                                result.Item.AddStudio((string)siteData["name"]);
+                            }
                         }
                     }
                 }
@@ -175,6 +197,11 @@ namespace ThePornDB.Providers
                         if (actorLink["parent"]["name"] != null)
                         {
                             name = (string)actorLink["parent"]["name"];
+
+                            if (actorLink["parent"]["disambiguation"] != null && !string.IsNullOrEmpty((string)actorLink["parent"]["disambiguation"]))
+                            {
+                                name += " (" + (string)actorLink["parent"]["disambiguation"] + ")";
+                            }
                         }
 
                         if (actorLink["parent"]["extras"]["gender"] != null)
@@ -307,7 +334,7 @@ namespace ThePornDB.Providers
                 result.Add(new RemoteSearchResult
                 {
                     ProviderIds = { { Plugin.Instance.Name, (string)searchResult["id"] } },
-                    Name = (string)searchResult["name"],
+                    Name = (searchResult["disambiguation"] != null && !string.IsNullOrEmpty((string)searchResult["disambiguation"])) ? (string)searchResult["name"] + " (" + (string)searchResult["disambiguation"] + ")" : (string)searchResult["name"],
                     ImageUrl = (string)searchResult["image"],
                 });
             }
@@ -337,7 +364,7 @@ namespace ThePornDB.Providers
             sceneData = (JObject)sceneData["data"];
 
             // result.Item.Name = (string)sceneData["name"];
-            result.Item.ExternalId = (string)sceneData["name"];
+            result.Item.ExternalId = (sceneData["disambiguation"] != null && !string.IsNullOrEmpty((string)sceneData["disambiguation"])) ? (string)sceneData["name"] + " (" + (string)sceneData["disambiguation"] + ")" : (string)sceneData["name"];
             result.Item.OriginalTitle = string.Join(", ", sceneData["aliases"].Select(o => o.ToString().Trim()));
             
             string overview = string.Empty;           
