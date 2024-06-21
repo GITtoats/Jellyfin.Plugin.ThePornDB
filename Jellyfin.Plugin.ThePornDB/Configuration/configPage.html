@@ -64,7 +64,7 @@
                         <label class="inputLabel inputLabelUnfocused" for="CustomTitle">Custom Title Format</label>
                         <input id="CustomTitle" name="CustomTitle" type="text" is="emby-input" />
                     </div>
-                     <div class="checkboxContainer checkboxContainer-withDescripton">
+                    <div class="checkboxContainer checkboxContainer-withDescripton">
                         <label class="emby-checkbox-label">
                             <input id="UseOriginalTitle" name="UseOriginalTitle" type="checkbox" is="emby-checkbox" />
                             <span>Use Original Title Format</span>
@@ -75,17 +75,22 @@
                         <input id="OriginalTitle" name="OriginalTitle" type="text" is="emby-input" />
                     </div>
 
-                      <div class="checkboxContainer checkboxContainer-withDescripton">
+                    <div class="checkboxContainer checkboxContainer-withDescripton">
                         <label class="emby-checkbox-label">
-                            <input id="UseCustomTagline" name="UseCustomTagline" type="checkbox" is="emby-checkbox" />
-                            <span>Use Custom Tagline Format</span>
+                            <input id="UseTagline" name="UseTagline" type="checkbox" is="emby-checkbox" />
+                            <span>Use Tagline Format</span>
                         </label>
                     </div>
                     <div class="inputContainer">
-                        <label class="inputLabel inputLabelUnfocused" for="CustomTagline">Original Title Format</label>
-                        <input id="CustomTagline" name="CustomTagline" type="text" is="emby-input" />
+                        <label class="inputLabel inputLabelUnfocused" for="Tagline">Original Title Format</label>
+                        <input id="Tagline" name="Tagline" type="text" is="emby-input" />
                     </div>
-                    
+                    <div class="checkboxContainer checkboxContainer-withDescripton">
+                        <label class="emby-checkbox-label">
+                            <input id="UseSortName" name="UseSortName" type="checkbox" is="emby-checkbox" />
+                            <span>Use Sortable Name Default {Studio} - {title}</span>
+                        </label>
+                    </div>
                     <div class="checkboxContainer checkboxContainer-withDescripton">
                         <label class="emby-checkbox-label">
                             <input id="UseUnmatchedTag" name="UseUnmatchedTag" type="checkbox" is="emby-checkbox" />
@@ -96,7 +101,7 @@
                         <label class="inputLabel inputLabelUnfocused" for="UnmatchedTag">Unmatched Tag</label>
                         <input id="UnmatchedTag" name="UnmatchedTag" type="text" is="emby-input" />
                     </div>
-                     <div class="selectContainer">
+                    <div class="selectContainer">
                         <label class="selectLabel" for="ThumbImage">Thumb Image Option</label>
                         <select is="emby-select" id="ThumbImage" name="ThumbImage" class="emby-select-withcolor emby-select">
                             <option value="All">All</option>
@@ -205,8 +210,9 @@
                     $('#CustomTitle').val(config.CustomTitle).change();
                     $('#UseOriginalTitle').prop('checked', config.UseOriginalTitle);
                     $('#OriginalTitle').val(config.OriginalTitle).change();
-                    $('#UseCustomTagline').prop('checked', config.UseCustomTagline);
-                    $('#CustomTagline').val(config.CustomTagline).change();
+                    $('#UseTagline').prop('checked', config.UseTagline);
+                    $('#Tagline').val(config.Tagline).change();
+                    $('#UseSortName').prop('checked', config.UseSortName);
                     $('#ThumbImage').val(config.ThumbImage).change();
                     $('#PosterImage').val(config.PosterImage).change();
                     $('#BackdropImage').val(config.BackdropImage).change();
@@ -238,8 +244,9 @@
                     config.CustomTitle = $('#CustomTitle').val();
                     config.UseOriginalTitle = $('#UseOriginalTitle').prop('checked');
                     config.OriginalTitle = $('#OriginalTitle').val();
-                    config.UseCustomTagline = $('#UseCustomTagline').prop('checked');
-                    config.CustomTagline = $('#CustomTagline').val();
+                    config.UseTagline = $('#UseTagline').prop('checked');
+                    config.Tagline = $('#Tagline').val();
+                    config.UseSortName = $('#UseSortName').prop('checked');
                     config.ThumbImage = $('#ThumbImage').val();
                     config.PosterImage = $('#PosterImage').val();
                     config.BackdropImage = $('#BackdropImage').val();

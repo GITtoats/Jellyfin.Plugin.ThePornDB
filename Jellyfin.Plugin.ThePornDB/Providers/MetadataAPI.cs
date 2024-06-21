@@ -104,8 +104,9 @@ namespace ThePornDB.Providers
 
             result.Item.Name = (string)sceneData["title"];
             result.Item.Overview = (string)sceneData["description"];
-            result.Item.OriginalTitle = OriginalTitle.FromCSV(sceneData);
-            result.Item.Tagline = Tagline.GetTagline(sceneData);
+            result.Item.ForcedSortName = CustomFormat.Get(sceneData, CustomFormat.ToFormat.Sortable, Plugin.Instance.Configuration.UseSortName, "{studio} - {title}");
+            result.Item.Tagline = CustomFormat.Get(sceneData, CustomFormat.ToFormat.Tagline, Plugin.Instance.Configuration.UseTagline,Plugin.Instance.Configuration.Tagline);
+            result.Item.OriginalTitle = CustomFormat.Get(sceneData, CustomFormat.ToFormat.Original, Plugin.Instance.Configuration.UseOriginalTitle, Plugin.Instance.Configuration.OriginalTitle);
 
             if (sceneData.ContainsKey("site") && sceneData["site"].Type == JTokenType.Object)
             {
