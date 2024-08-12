@@ -70,7 +70,7 @@ namespace ThePornDB.Providers
 
             var (prefixID, searchURL, sceneURL) = GetSettings(sceneType);
 
-            var curID = searchInfo.Name.GetAttributeValue("theporndbid");
+            var curID = searchInfo.Name.GetAttributeValue("theporndbid") ?? searchInfo.Name.GetAttributeValue("TPDBID");
             if (string.IsNullOrEmpty(curID))
             {
                 searchInfo.ProviderIds.TryGetValue(Plugin.Instance.Name, out curID);
@@ -109,7 +109,7 @@ namespace ThePornDB.Providers
                 {
                     result.Add(new RemoteSearchResult
                     {
-                        ProviderIds = { { Plugin.Instance.Name, prefixID + curID } },
+                        ProviderIds = { { Plugin.Instance.Name, curID.StartsWith(prefixID, StringComparison.OrdinalIgnoreCase) ? curID : prefixID + curID } },
                         Name = sceneData.Item.Name,
                         ImageUrl = sceneImages?.Where(o => o.Type == ImageType.Primary).FirstOrDefault()?.Url,
                         PremiereDate = sceneData.Item.PremiereDate,
@@ -141,7 +141,7 @@ namespace ThePornDB.Providers
 
             try
             {
-                result = await MetadataAPI.SceneSearch(searchTitle, oshash, searchURL, prefixID, cancellationToken).ConfigureAwait(false);
+                result = await MetadataAPI.SceneSearch(searchTitle, oshash, searchInfo.Year, searchURL, prefixID, cancellationToken).ConfigureAwait(false);
             }
             catch (Exception e)
             {

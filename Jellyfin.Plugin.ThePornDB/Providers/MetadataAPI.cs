@@ -51,7 +51,7 @@ namespace ThePornDB.Providers
             return json;
         }
 
-        public static async Task<List<RemoteSearchResult>> SceneSearch(string searchTitle, string oshash, string url, string prefixID, CancellationToken cancellationToken)
+        public static async Task<List<RemoteSearchResult>> SceneSearch(string searchTitle, string oshash, int? year, string url, string prefixID, CancellationToken cancellationToken)
         {
             var result = new List<RemoteSearchResult>();
             if (string.IsNullOrEmpty(searchTitle))
@@ -59,7 +59,7 @@ namespace ThePornDB.Providers
                 return result;
             }
 
-            url = string.Format(url, Uri.EscapeDataString(searchTitle), Uri.EscapeDataString(oshash));
+            url = string.Format(url, Uri.EscapeDataString(searchTitle), Uri.EscapeDataString(oshash), Uri.EscapeDataString(year.HasValue ? year.Value.ToString() : string.Empty));
             var data = await GetDataFromAPI(url, cancellationToken).ConfigureAwait(false);
             if (data == null || !data.ContainsKey("data") || data["data"].Type != JTokenType.Array)
             {
@@ -185,7 +185,9 @@ namespace ThePornDB.Providers
                     string curID = string.Empty,
                         name = (string)actorLink["name"],
                         gender = string.Empty,
-                        role = string.Empty;
+                        role = string.Empty,
+                        face = (string)actorLink["face"],
+                        image = (string)actorLink["image"];
 
                     if (actorLink["parent"] != null && actorLink["parent"].Type == JTokenType.Object)
                     {
@@ -208,6 +210,16 @@ namespace ThePornDB.Providers
                         {
                             gender = (string)actorLink["parent"]["extras"]["gender"];
                         }
+
+                        if (actorLink["parent"]["face"] != null)
+                        {
+                            face = (string)actorLink["parent"]["face"];
+                        }
+
+                        if (actorLink["parent"]["image"] != null)
+                        {
+                            image = (string)actorLink["parent"]["image"];
+                        }
                     }
 
                     var actor = new PersonInfo
@@ -218,10 +230,10 @@ namespace ThePornDB.Providers
                     switch (Plugin.Instance.Configuration.ActorsImage)
                     {
                         case ActorsImageStyle.Face:
-                            actor.ImageUrl = (string)actorLink["face"];
+                            actor.ImageUrl = face;
                             break;
                         case ActorsImageStyle.Poster:
-                            actor.ImageUrl = (string)actorLink["image"];
+                            actor.ImageUrl = image;
                             break;
                     }
 
