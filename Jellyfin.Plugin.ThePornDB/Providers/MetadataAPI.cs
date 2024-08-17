@@ -183,8 +183,8 @@ namespace ThePornDB.Providers
                         name = (string)actorLink["name"],
                         gender = string.Empty,
                         role = string.Empty,
-                        face = (string)actorLink["face"],
-                        image = (string)actorLink["image"];
+                        face = string.Empty,
+                        image = string.Empty;
 
                     if (actorLink["parent"] != null && actorLink["parent"].Type == JTokenType.Object)
                     {
@@ -208,15 +208,6 @@ namespace ThePornDB.Providers
                             gender = (string)actorLink["parent"]["extras"]["gender"];
                         }
 
-                        if (actorLink["parent"]["face"] != null)
-                        {
-                            face = (string)actorLink["parent"]["face"];
-                        }
-
-                        if (actorLink["parent"]["image"] != null)
-                        {
-                            image = (string)actorLink["parent"]["image"];
-                        }
                     }
 
                     var actor = new PersonInfo
@@ -227,9 +218,25 @@ namespace ThePornDB.Providers
                     switch (Plugin.Instance.Configuration.ActorsImage)
                     {
                         case ActorsImageStyle.Face:
+                            if (actorLink["parent"]["face"] != null)
+                            {
+                                image = (string)actorLink["parent"]["face"];
+                            }
+                            else
+                            {
+                                image = (string)actorLink["face"];
+                            }
                             actor.ImageUrl = face;
-                            break;
+                            break;                      
                         case ActorsImageStyle.Poster:
+                            if (actorLink["parent"]["image"] != null)
+                            {
+                                image = (string)actorLink["parent"]["image"];
+                            }
+                            else
+                            {
+                                image = (string)actorLink["image"];
+                            }
                             actor.ImageUrl = image;
                             break;
                     }
