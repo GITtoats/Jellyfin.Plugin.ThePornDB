@@ -272,7 +272,7 @@ namespace ThePornDB.Providers
                         continue;
                     }
 
-                    result.People.Add(actor);
+                    result.AddPerson(actor);
                 }
             }
 
@@ -290,7 +290,7 @@ namespace ThePornDB.Providers
 #endif
                     };
 
-                    result.People.Add(director);
+                    result.AddPerson(director);
                 }
             }
 
@@ -319,32 +319,6 @@ namespace ThePornDB.Providers
             var sceneData = JsonConvert.DeserializeObject<Scene>(data);
 
             var images = SceneStyle.ImageList(sceneData);
-            //var images = new List<(ImageType Type, string Url)>()
-            //{
-            //    (ImageType.Logo, sceneData.Site.Logo),
-            //};
-
-            //string background = sceneData.Background.Large;
-            //if (!string.IsNullOrEmpty(background))
-            //{
-            //    images.Insert(0, (ImageType.Backdrop, (string)background));
-            //}
-
-            //string primary = null;
-            //switch (Plugin.Instance.Configuration.ScenesImage)
-            //{
-            //    case ScenesImageStyle.Poster:
-            //        primary = sceneData.Posters.Large;
-            //        break;
-            //    case ScenesImageStyle.Background:
-            //        primary = sceneData.Background.Large;
-            //        break;
-            //}
-
-            //if (!string.IsNullOrEmpty(primary))
-            //{
-            //    images.Insert(0, (ImageType.Primary, (string)primary));
-            //}
 
             foreach (var image in images)
             {
@@ -425,24 +399,11 @@ namespace ThePornDB.Providers
             var data = http["data"].ToString();
             var sceneData = JsonConvert.DeserializeObject<Performer>(data);
 
-            // result.Item.Name = (string)sceneData["name"];
             result.Item.ExternalId = !string.IsNullOrEmpty(sceneData.Disambiguation) ? sceneData.Name + " (" + sceneData.Disambiguation + ")" : (string)sceneData.Name;
             result.Item.OriginalTitle = string.Join(", ", sceneData.Aliases.Select(o => o.ToString().Trim()));
 
             string overview = PerformerStyle.Style(sceneData).Descripton;
-            //switch (Plugin.Instance.Configuration.ActorsOverviewStyle)
-            //{
-            //    case ActorsOverviewStyle.Default:
-            //        overview = sceneData.Bio;
-            //        break;
-            //    case ActorsOverviewStyle.Custom:
-            //        overview = PerformerStyle.Style(sceneData).Descripton;
-            //        break;
-            //    case ActorsOverviewStyle.None:
-            //        overview = " ";
-            //        break;
-            //}
-
+          
             if (!string.IsNullOrEmpty(overview))
             {
                 result.Item.Overview = overview;
