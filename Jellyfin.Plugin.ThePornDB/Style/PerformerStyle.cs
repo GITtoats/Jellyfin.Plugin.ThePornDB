@@ -17,6 +17,8 @@ namespace ThePornDB.Style
 {
     public class PerformerStyle
     {
+  
+
         public static (string Descripton, string[] Tags) Style (Performer data)
         {
 
@@ -28,13 +30,14 @@ namespace ThePornDB.Style
             {
                 cup = Regex.Replace(detail.CupSize, "[0-9]".ToUpper(), string.Empty);
             }
+           
 
-            string boobs = String.Format("Boobs: {1} Fake: {0}", detail.FakeBoobs ? "Yes" : "No", cup);
+            string boobs = String.Format("Boobs: {1} Fake: {0}", detail.FakeBoobs == "true" ? "Yes" : (detail.FakeBoobs == "false" ? "No" : ""), cup);
 
             string career = String.Format("Start: {0} End: {1}", detail.CareerStart, detail.CareerEnd);
 
-            string fakeboobs = String.Format("{0}",detail.FakeBoobs ? "Yes": "No");
-            string samesexonly = String.Format("{0}", detail.SameSexOnly ? "Yes" : "No");
+            string fakeboobs = String.Format("{0}",detail.FakeBoobs == "true" ? "Yes" : (detail.FakeBoobs == "false" ? "No":""));
+            string samesexonly = String.Format("{0}", detail.SameSexOnly == "true" ? "Yes" : (detail.SameSexOnly == "false" ? "No":""));
 
 
             var placeholders = new Dictionary<string, string>()
