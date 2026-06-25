@@ -1,11 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
 using MediaBrowser.Model.Tasks;
+
+#if __EMBY__
+using MediaBrowser.Controller.Entities.Movies;
+#else
+using Jellyfin.Data.Enums;
+#endif
 
 namespace ThePornDB.ScheduledTasks
 {
@@ -22,7 +29,7 @@ namespace ThePornDB.ScheduledTasks
 
         public string Name => "Cleanup";
 
-        public string Description => "Cleanup ids";
+        public string Description => "Cleanup";
 
         public string Category => Plugin.Instance.Name;
 
@@ -35,11 +42,44 @@ namespace ThePornDB.ScheduledTasks
             await Task.Yield();
             progress?.Report(0);
 
-            var items = this.libraryManager.GetItemList(new InternalItemsQuery()).Where(o => o.ProviderIds.ContainsKey(Plugin.Instance.Name));
+            var items = this.libraryManager.GetItemList(new InternalItemsQuery()
+            {
+#if __EMBY__
+                IncludeItemTypes = new[] { nameof(Movie) },
+#else
+                IncludeItemTypes = [BaseItemKind.Movie],
+#endif
+            }).Where(o => o.ProviderIds.ContainsKey(Plugin.Instance.Name));
+
             foreach (var (idx, item) in items.WithIndex())
             {
                 var newItem = item;
                 newItem.ProviderIds[Plugin.Instance.Name] = item.ProviderIds[Plugin.Instance.Name].Split('?', StringSplitOptions.RemoveEmptyEntries).First();
+
+#if __EMBY__
+                this.libraryManager.UpdateItem(item, newItem, ItemUpdateType.MetadataEdit);
+#else
+                await this.libraryManager.UpdateItemAsync(item, newItem, ItemUpdateType.MetadataEdit, cancellationToken).ConfigureAwait(false);
+#endif
+
+                progress?.Report((double)idx / items.Count() * 100);
+            }
+
+            progress?.Report(50);
+
+            items = this.libraryManager.GetItemList(new InternalItemsQuery()
+            {
+#if __EMBY__
+                IncludeItemTypes = new[] { nameof(Person) },
+#else
+                IncludeItemTypes = [BaseItemKind.Person],
+#endif
+            }).Where(o => o.ProviderIds.ContainsKey(Plugin.Instance.Name));
+
+            foreach (var (idx, item) in items.WithIndex())
+            {
+                var newItem = item;
+                newItem.Name = newItem.Path.Split(Path.DirectorySeparatorChar).Last();
 
 #if __EMBY__
                 this.libraryManager.UpdateItem(item, newItem, ItemUpdateType.MetadataEdit);
