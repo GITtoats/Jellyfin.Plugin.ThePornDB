@@ -17,9 +17,8 @@ namespace ThePornDB.Style
 {
     public class PerformerStyle
     {
-        public static (string Descripton, string[] Tags) Style (Performer data)
+        public static (string Descripton, string[] Tags) Style(Performer data)
         {
-
             var cup = string.Empty;
 
             var detail = data.Extras;
@@ -29,13 +28,12 @@ namespace ThePornDB.Style
                 cup = Regex.Replace(detail.CupSize, "[0-9]".ToUpper(), string.Empty);
             }
 
-            string boobs = String.Format("Boobs: {1} Fake: {0}", detail.FakeBoobs ? "Yes" : "No", cup);
+            string boobs = String.Format("Boobs: {1} Fake: {0}", detail.FakeBoobs == "true" ? "Yes" : "No", cup);
 
             string career = String.Format("Start: {0} End: {1}", detail.CareerStart, detail.CareerEnd);
 
-            string fakeboobs = String.Format("{0}",detail.FakeBoobs ? "Yes": "No");
-            string samesexonly = String.Format("{0}", detail.SameSexOnly ? "Yes" : "No");
-
+            string fakeboobs = String.Format("{0}", detail.FakeBoobs == "true" ? "Yes" : (detail.FakeBoobs == "false" ? "No" : string.Empty));
+            string samesexonly = String.Format("{0}", detail.SameSexOnly == "true" ? "Yes" : (detail.SameSexOnly == "false" ? "No" : string.Empty));
 
             var placeholders = new Dictionary<string, string>()
             {
@@ -47,18 +45,18 @@ namespace ThePornDB.Style
                 { "{hips}", detail.Hips },
                 { "{waist}", detail.Waist },
                 { "{active}", detail.Active },
-                { "{height}", detail.Height},
+                { "{height}", detail.Height },
                 { "{weight}", detail.Weight },
                 { "{gender}", detail.Gender },
                 { "{cupsize}", detail.CupSize },
                 { "{tattoos}", detail.Tattoos },
                 { "{birthday}", detail.Birthday },
-                { "{deathday}", detail.Deathday},
+                { "{deathday}", detail.Deathday },
                 { "{piercings}", detail.Piercings },
                 { "{ethnicity}", detail.Ethnicity },
                 { "{astrology}", detail.Astrology },
                 { "{birthplace}", detail.Birthplace },
-                { "{eye_colour}" ,detail.EyeColour },
+                { "{eye_colour}", detail.EyeColour },
                 { "{hair_color}", detail.HairColour },
                 { "{nationality}", detail.Nationality },
                 { "{measurements}", detail.Measurements },
@@ -66,8 +64,6 @@ namespace ThePornDB.Style
                 { "{career_end}", detail.CareerEnd },
                 { "{career_start}", detail.CareerStart },
                 { "{same_sex_only}", samesexonly },
-                
-              
             };
 
             switch (detail.Gender)
@@ -109,8 +105,8 @@ namespace ThePornDB.Style
                 case (ActorsTagStyle.Nationality):
                     tags = detail.Nationality;
                     break;
-
             }
+
             var description = string.Empty;
 
             switch (Plugin.Instance.Configuration.ActorsOverviewStyle)
@@ -126,7 +122,6 @@ namespace ThePornDB.Style
                     break;
             }
 
-
             tags = placeholders.Aggregate(tags, (current, parameter) => current.Replace(parameter.Key, parameter.Value));
 
             description = placeholders.Aggregate(description, (current, parameter) => current.Replace(parameter.Key, parameter.Value));
@@ -135,6 +130,5 @@ namespace ThePornDB.Style
 
             return (description, tag);
         }
-        
     }
 }

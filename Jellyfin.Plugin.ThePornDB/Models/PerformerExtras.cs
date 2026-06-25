@@ -59,17 +59,15 @@ namespace ThePornDB.Models
         public string Measurements { get; set; }
 
         [JsonProperty(PropertyName = "fake_boobs")]
-        public bool FakeBoobs { get; set; }
+        public string FakeBoobs { get; set; }
 
         [JsonProperty(PropertyName = "same_sex_only")]
-        public bool SameSexOnly { get; set; }
+        public string SameSexOnly { get; set; }
 
         [JsonProperty(PropertyName = "career_start_year")]
         public string CareerStart { get; set; }
 
         [JsonProperty(PropertyName = "career_end_year")]
         public string CareerEnd { get; set; }
-
- 
     }
 }
