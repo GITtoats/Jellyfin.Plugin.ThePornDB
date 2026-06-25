@@ -322,24 +322,24 @@ namespace ThePornDB.Providers
 
             var data = http["data"].ToString();
             var sceneData = JsonConvert.DeserializeObject<Scene>(data);
+            var images = SceneStyle.ImageList(sceneData);
+            //var images = new List<(ImageType Type, string Url)>()
+            //{
+            //    (ImageType.Backdrop, sceneData.Background.Large),
+            //    (ImageType.Backdrop, sceneData.BackgroundBack.Large),
+            //    (ImageType.Logo, sceneData.Site.Logo),
+            //};
 
-            var images = new List<(ImageType Type, string Url)>()
-            {
-                (ImageType.Backdrop, sceneData.Background.Large),
-                (ImageType.Backdrop, sceneData.BackgroundBack.Large),
-                (ImageType.Logo, sceneData.Site.Logo),
-            };
-
-            string primary = null;
-            switch (Plugin.Instance.Configuration.ScenesImage)
-            {
-                case ScenesImageStyle.Poster:
-                    primary = sceneData.Posters.Large;
-                    break;
-                case ScenesImageStyle.Background:
-                    primary = sceneData.Background.Large;
-                    break;
-            }
+            //string primary = null;
+            //switch (Plugin.Instance.Configuration.ScenesImage)
+            //{
+            //    case ScenesImageStyle.Poster:
+            //        primary = sceneData.Posters.Large;
+            //        break;
+            //    case ScenesImageStyle.Background:
+            //        primary = sceneData.Background.Large;
+            //        break;
+            //}
 
             //if (!string.IsNullOrEmpty(primary))
             //{
