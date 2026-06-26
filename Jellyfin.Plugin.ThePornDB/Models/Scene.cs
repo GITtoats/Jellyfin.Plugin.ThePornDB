@@ -21,6 +21,9 @@ namespace ThePornDB.Models
         [JsonProperty(PropertyName = "description")]
         public string Description { get; set; }
 
+        [JsonProperty(PropertyName = "rating")]
+        public float Rating { get; set; }
+
         [JsonProperty(PropertyName = "trailer")]
         public string Trailer { get; set; }
 

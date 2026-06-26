@@ -124,6 +124,11 @@ namespace ThePornDB.Providers
             result.Item.Tagline = SceneStyle.Title(sceneData, SceneStyle.Typ.Tagline, Plugin.Instance.Configuration.UseTagline, Plugin.Instance.Configuration.Tagline);
             result.Item.OriginalTitle = SceneStyle.Title(sceneData, SceneStyle.Typ.Original, Plugin.Instance.Configuration.UseOriginalTitle, Plugin.Instance.Configuration.OriginalTitle);
             result.Item.ForcedSortName = SceneStyle.Title(sceneData, SceneStyle.Typ.Sortable, Plugin.Instance.Configuration.UseForceSortableTitle, Plugin.Instance.Configuration.ForceSortableTitle);
+             
+            if (sceneData.Rating > 0)
+            {
+                result.Item.CommunityRating = sceneData.Rating;
+            }
 
             if (Plugin.Instance.Configuration.StudioStyle == StudioStyle.All || Plugin.Instance.Configuration.StudioStyle == StudioStyle.Site)
             {
