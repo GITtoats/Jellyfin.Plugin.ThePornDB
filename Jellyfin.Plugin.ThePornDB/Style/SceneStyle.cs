@@ -160,12 +160,14 @@ namespace ThePornDB.Style
                     if (!string.IsNullOrEmpty(data.Background.Full))
                     {
                         images.Add(new() { Type = ImageType.Backdrop, Url = data.Background.Full });
+                        images.Add(new() { Type = ImageType.Backdrop, Url = data.BackgroundBack.Full });
                     }
                     break;
                 case ScenesBackdropImageStyle.Large:
                     if (!string.IsNullOrEmpty(data.Background.Large))
                     {
                         images.Add(new() { Type = ImageType.Backdrop, Url = data.Background.Large });
+                        images.Add(new() { Type = ImageType.Backdrop,Url = data.BackgroundBack.Large });
                     }
                     break;
             }
